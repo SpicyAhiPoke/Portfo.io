@@ -1,0 +1,45 @@
+﻿@using Portfolio.Data
+@inject ProjectService projsvc
+<MudContainer MaxWidth="MaxWidth.Large" Class="d-flex flex-column flex-grow-1 py-16" >
+<MudCarousel Class= @ref="_carousel" ItemsSource="@projsvc._projects" @bind-SelectedIndex="selectedIndex" Style="height:600px;" ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" AutoCycle="@_autocycle">
+	<BulletTemplate Context="selected">
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Icon="@(selected ? Icons.Material.Filled.DirectionsRun : Icons.Material.TwoTone.DoorFront)" Color="@Color.Primary" />
+            </span>
+        </div>
+    </BulletTemplate>
+	<ItemTemplate>
+		<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex flex-column flex-grow-1">
+			<MudCard>
+				<MudCardHeader Style="background-color:lightgreen;color:white">
+					<CardHeaderContent>
+						<MudText Typo="Typo.h5">@context.Name</MudText>
+						<MudText Typo="Typo.h6">by @context.Author</MudText>
+					</CardHeaderContent>
+					<CardHeaderActions>
+						<MudIconButton Href="@context.Url" Icon="@Icons.Material.Filled.Link" Color="Color.Primary" />
+					</CardHeaderActions>
+				</MudCardHeader>
+				<MudCardContent>
+					<MudCardMedia Image="img/sun.jpg" Height="200" />
+					 <MudPaper Elevation="25" Class="px-4 py-4">
+						<MudText Align="Align.Start" Typo="Typo.body1">Completed: @context.Complete</MudText>
+						<MudText Typo="Typo.body1">@context.Description</MudText>
+					 </MudPaper>
+				</MudCardContent>
+			</MudCard>
+		</MudContainer>
+	</ItemTemplate>
+</MudCarousel>
+
+</MudContainer>
+
+@code {
+	private MudCarousel<Project> _carousel;
+	private bool _arrows = true;
+	private bool _bullets = true;
+	private bool _enableSwipeGesture = true;
+	private bool _autocycle = true;
+	private int selectedIndex = 0;
+}

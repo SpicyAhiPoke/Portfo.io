@@ -1,0 +1,65 @@
+﻿@inject ExpService expsvc
+
+<MudDropContainer T="Experience" Items="expsvc._exps" ItemsSelector="@((item,dropzone) => item.Place == dropzone)" CanDropClass="mud-border-success" NoDropClass="mud-border-error" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1 px-16">
+	<ChildContent>
+		<MudDropZone T="Experience" Identifier="Stack" CanDrop="@((item) => false)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8 flex-grow-1 d-flex flex-wrap">
+			<MudText Typo="Typo.h6" Class="mb-4">
+				Stack
+				<MudIcon Icon="@Icons.Material.Filled.Code" Size="Size.Medium" Style="color:lightgreen" />
+			</MudText>
+			<MudSpacer />
+			<MudIconButton OnClick="Reset" Icon="@Icons.Material.Filled.Replay" Color="Color.Primary" />
+		</MudDropZone>
+
+		<div class="d-flex flex-wrap justify-space-between">
+			<MudDropZone T="Experience" Identifier="Language" CanDrop="@((item) => item.IsPicked == false && item.Type == ExpType.Language)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8 flex-grow-1">
+				<MudText Typo="Typo.h6" Class="mb-4">
+					Language
+					<MudIcon Icon="@Icons.Material.Filled.Abc" Size="Size.Medium" Style="color:lightgreen" />
+				</MudText>
+			</MudDropZone>
+			<MudDropZone T="Experience" Identifier="Application" CanDrop="@((item) => item.IsPicked == false && item.Type == ExpType.Application)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8 flex-grow-1">
+				<MudText Typo="Typo.h6" Class="mb-4">
+					Application
+					<MudIcon Icon="@Icons.Material.Filled.DevicesOther" Size="Size.Medium" Style="color:lightgreen" />
+				</MudText>
+			</MudDropZone>
+			<MudDropZone T="Experience" Identifier="Framework" CanDrop="@((item) => item.IsPicked == false && item.Type == ExpType.Framework)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8 flex-grow-1">
+				<MudText Typo="Typo.h6" Class="mb-4">
+					Framework
+					<MudIcon Icon="@Icons.Material.Filled.Web" Size="Size.Medium" Style="color:lightgreen" />
+				</MudText>
+			</MudDropZone>
+			<MudDropZone T="Experience" Identifier="Database" CanDrop="@((item) => item.IsPicked == false && item.Type == ExpType.Database)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8 flex-grow-1">
+				<MudText Typo="Typo.h6" Class="mb-4">
+					Database
+					<MudIcon Icon="@Icons.Material.Filled.Dataset" Size="Size.Medium" Style="color:lightgreen" />
+				</MudText>
+			</MudDropZone>
+		</div>
+	</ChildContent>
+	<ItemRenderer>
+		<MudPaper Style="background-color:lightgreen;color:white" Elevation="25" Class="pa-4 ma-2">
+			<MudText Align="Align.Center" Typo="Typo.subtitle1" Class="mb-4">@context.Name</MudText>
+		</MudPaper>
+	</ItemRenderer>
+</MudDropContainer>
+
+@code {
+	private bool _applyDropClassesOnDragStarted = false;
+
+	private void Reset()
+	{
+		foreach (var item in expsvc._exps)
+		{
+			item.Place = "Stack";
+			item.IsPicked = false;
+		}
+	}
+
+	private void ItemUpdated(MudItemDropInfo<Experience> dropItem)
+	{
+		dropItem.Item.IsPicked = true;
+		dropItem.Item.Place = dropItem.DropzoneIdentifier;
+	}
+}

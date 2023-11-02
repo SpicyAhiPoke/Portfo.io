@@ -1,0 +1,44 @@
+﻿<MudLayout>
+    <MudToolBar>
+        <MudAppBar Bottom="true" Fixed="true" Style="background-color:lightgreen" Elevation="1">
+            <AuthorizeView Roles="User">
+                <Authorized>
+                    <div class="docs-section-content-inner relative d-flex flex-grow-1 justify-center align-center px-8 py-8">
+                        <MudIconButton Href="aloha/#home" Icon="@Icons.Material.Filled.House" Color="Color.Inherit" />
+                        <MudIconButton Href="aloha/#about" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" />
+                        <MudIconButton Href="aloha/#experience" Icon="@Icons.Material.Filled.Star" Color="Color.Inherit" />
+                        <MudIconButton Href="aloha/#project" Icon="@Icons.Material.Filled.Brush" Color="Color.Inherit" />
+                        <MudIconButton Href="aloha/#contact" Icon="@Icons.Material.Filled.Message" Color="Color.Inherit" />
+                        <MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="false" />
+                        <MudPopover Open="@_isOpen" Fixed="true" Class="px-4 pt-4" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter">
+                            <div class="d-flex flex-column">
+                                <ContactForm />
+                                <MudButton OnClick="(e => ToggleOverlay(false))" Class="ml-auto mr-n3 mb-1" Color="Color.Error">X</MudButton>
+                            </div>
+                        </MudPopover>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </MudAppBar>
+    </MudToolBar>
+</MudLayout>
+
+@code{
+    public bool _isOpen;
+
+    public void ToggleOpen()
+    {
+        if (_isOpen)
+            _isOpen = false;
+        else
+            _isOpen = true;
+    }
+
+    private bool isVisible;
+
+    public void ToggleOverlay(bool value)
+    {
+        isVisible = value;
+        ToggleOpen();
+    }
+}

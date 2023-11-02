@@ -1,0 +1,53 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager navman
+@inject AuthenticationStateProvider authsp
+@inject IJSRuntime js
+@inject ISnackbar snack
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudAppBar Style="background-color:lightgreen" Dense="true">
+        <AuthorizeView Roles="User, Administrator">
+            <Authorized>
+                <MudText Typo="Typo.h4" Color="Color.Primary" Style="text-align:center">Aloha, @context.User.Identity.Name!</MudText>
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.AccountBox" Color="Color.Inherit" Edge="Edge.Start" OnClick="HelloWorld" />
+                <MudIconButton Href="javascript:void(0)" Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Edge="Edge.Start" OnClick="@Logout" />
+            </Authorized>
+            <NotAuthorized>
+                <MudText Typo="Typo.h3" Style="text-align:center">Please login, mahalo!</MudText>
+                <MudSpacer />
+                <MudIconButton Href="javascript:void(0)" Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Edge="Edge.Start" OnClick="@Logout" />
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrator">
+            <Authorized>
+                <MudIconButton Icon="@Icons.Material.Filled.ManageAccounts" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => navman.NavigateTo("/manage"))" />
+            </Authorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudMainContent>
+            @Body
+    </MudMainContent>
+    <NavBar/>
+</MudLayout>
+
+@code {
+    [CascadingParameter]
+    private Task <AuthenticationState> authstate { get; set; }
+    private async Task HelloWorld()
+    {
+        var auth = await authstate;
+        var message = $"You are logged in as: {auth.User.Identity.Name}";
+        snack.Add(message, Severity.Info);
+    }
+
+    private async Task Logout()
+    {
+        var customauth = (CustomAuthenticationStateProvider)authsp;
+        await customauth.UpdateAuthenticationStateAsync(null);
+        navman.NavigateTo("/", true);
+    }
+}

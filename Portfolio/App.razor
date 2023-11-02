@@ -1,0 +1,31 @@
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <PageTitle>401</PageTitle>
+                    <MudText Typo="Typo.h3" Color="Color.Error" Style="text-align:center" Class="px-8 py-8">
+                        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Size="Size.Large" Color="Color.Error" />
+                        401: Unathorized Access
+                    </MudText>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <CascadingAuthenticationState>
+                <PageTitle>404</PageTitle>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <MudText Typo="Typo.h3" Color="Color.Error" Style="text-align:center" Class="px-8 py-8">
+                        <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Size="Size.Large" Color="Color.Error" />
+                        404: Not Found
+                    </MudText>
+                </LayoutView>
+            </CascadingAuthenticationState>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code{
+
+}

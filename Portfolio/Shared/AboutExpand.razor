@@ -1,0 +1,79 @@
+﻿@inject AboutService aboutsvc
+
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudGrid>
+       <MudItem xs="12">
+            @foreach (var about in aboutsvc._abouts)
+            {
+                <MudExpansionPanel HideIcon="true">
+                    <TitleContent>
+                        <div class="d-flex">
+                            <MudText Typo="Typo.h6" Class="mt-1">@about.Type</MudText>
+                            <MudSpacer />
+                            @switch (about.Type)
+                            {
+                                case QuestionType.Who:
+                                    if (true)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.PersonSearch" Style="color:lightgreen" />
+                                    }
+                                    break;
+                                case QuestionType.What:
+                                    if (true)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.ThumbsUpDown" Style="color:lightgreen" />
+                                    }
+                                    break;
+                                case QuestionType.Where:
+                                    if (true)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.TravelExplore" Style="color:lightgreen" />
+                                    }
+                                    break;
+                                case QuestionType.When:
+                                    if (true)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.AccessTime" Style="color:lightgreen" />
+                                    }
+                                    break;
+                                case QuestionType.Why:
+                                    if (true)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.Cloud" Style="color:lightgreen" />
+                                    }
+                                    break;
+                                case QuestionType.How:
+                                    if (true)
+                                    {
+                                        <MudIcon Icon="@Icons.Material.Filled.Directions" Style="color:lightgreen" />
+                                    }
+                                    break;
+                                default:
+                                    <MudIcon Icon="@Icons.Material.Filled.QuestionAnswer" Style="color:lightgreen" />
+                                    break;
+                            }
+                        </div>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudText Typo="Typo.subtitle1">@about.Question</MudText>
+                        <MudSpacer />
+                        <MudPaper Elevation="25" Style="background-color:lightgreen;color:white" Class="d-flex align-center justify-center mud-width-full px-8 py-8">
+                            <MudText Align="Align.End" Typo="Typo.body2">@about.Answer</MudText>
+                        </MudPaper>
+
+
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && 143 < ch?.Length)
+            yield return "Max reached!";
+    }
+
+}

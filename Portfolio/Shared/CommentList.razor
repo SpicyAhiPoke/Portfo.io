@@ -1,0 +1,69 @@
+﻿@inject CommentService commSvc
+@inject UserAccountService accSvc
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex flex-column flex-grow-1">
+    <MudGrid>
+        <!--input-->
+        <MudItem xs="12" sm="12">
+            <MudTextField @bind-Value="text" T="string" Counter="143" MaxLength="143" Label="Leave a comment..." Variant="Variant.Outlined" Clearable="true" Immediate="true" Lines="1" Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Add" OnAdornmentClick="@OnClick_Add" AdornmentAriaLabel="Add" AdornmentColor="Color.Primary"/>
+        </MudItem>
+        <!--list-->
+            <MudPaper Width="100%">
+                <MudList Dense="true">
+                @foreach (var item in commSvc._comms)
+                    {
+                    <MudStack Row="true">
+                        <MudListItem Avatar="@Icons.Material.Filled.Image">
+                            <MudText> @@@item.UserCommentName on @item.Add</MudText>
+                        </MudListItem>
+                        <MudSpacer />
+                    <MudButton OnClick="() => OnClick_Like(item)" Variant="Variant.Filled" Style="background-color:lightgreen;color:white" StartIcon="@Icons.Material.Filled.ThumbUp"><MudText>@item.Likes</MudText></MudButton>
+                    </MudStack>
+                    <MudTextField Disabled="true" Text="@item.Text" T="string" Counter="143" MaxLength="143" Variant="Variant.Outlined"/>
+                        <HorizonDiv />
+                    }
+                </MudList>
+            </MudPaper>
+        </MudGrid>
+</MudContainer>
+
+@code {
+    private List<Comment> _comms;
+    private Comment _acomm;
+    private string text;
+    private int likes;
+    //init
+    protected override async Task OnInitializedAsync()
+    {
+        //list >< svc
+        _comms = commSvc.GetComments();
+    }
+    //add
+    private async Task OnClick_Add()
+    {
+        commSvc.AddUserComment(text);
+        text = "";
+    }
+    //like
+    private void OnClick_Like(Comment comment)
+    {
+        commSvc.LikeComment(comment);
+    }
+
+    // private int currentCount = 0;
+
+    // [Parameter]
+    // public int IncrementAmount { get; set; } = 1;
+
+    // private void IncrementCount()
+    // {
+    //     currentCount += IncrementAmount;
+    // }
+
+    //maxc
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && ch?.Length > 134)
+            yield return "Max reached!";
+    }
+}

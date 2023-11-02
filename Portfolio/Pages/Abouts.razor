@@ -1,0 +1,13 @@
+﻿@page "/about"
+@attribute [Authorize(Roles = "User")]
+<h1 id="about">
+    <MudText Typo="Typo.h4" Style="text-align:center">About</MudText>
+</h1>
+<PageTitle>About</PageTitle>
+<AboutExpand />
+<HorizonDiv />
+<AnchorNav />
+
+@code {
+
+}

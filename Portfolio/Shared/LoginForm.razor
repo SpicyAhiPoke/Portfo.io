@@ -1,0 +1,114 @@
+﻿@inject AuthenticationStateProvider authsp
+@inject NavigationManager navman
+@inject UserAccountService accsvc
+@inject IJSRuntime js
+@inject ISnackbar snack
+
+<MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="d-flex flex-column flex-grow-1 py-16">
+    <EditForm Model="@input" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Username"
+                @bind-Value="input.Username" For="@(() => input.Username)" />
+                <MudTextField Label="Password" Class="mt-3"
+                @bind-Value="input.Password" For="@(() => input.Password)" InputType="@PasswordInput"
+                Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show" AdornmentColor="Color.Primary" Clearable="true"/>
+            </MudCardContent>
+            <MudCardActions Style="align-content:center">
+                <MudButton OnClick="@((e) => FillAdmin())" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Style="background-color:lightgreen; color:white" Class="ml-auto">Admin</MudButton>
+                <MudButton OnClick="@((e) => FillUser())" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Style="background-color:lightgreen; color:white" Class="ml-auto">User</MudButton>
+                <MudButton OnClick="@((e) => AuthenticateUser())" ButtonType="ButtonType.Submit" Variant="Variant.Filled" Style="background-color:lightgreen; color:white" Class="ml-auto">Sign in</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+</MudContainer>
+
+@code {
+    private Input input = new();
+    private class Input
+    {
+        [Required]
+        public string Username { get; set; }
+        [Required]
+        public string Password { get; set; }
+    }
+
+    private async Task AuthenticateUser()
+    {
+        var useracc = accsvc.GetUsername(input.Username);
+        if (useracc == null || useracc.Password != input.Password)
+        {
+            ShowAlert("Invalid Username/Password");
+            return;
+        }
+        else
+        {
+            var customauth = (CustomAuthenticationStateProvider)authsp;
+
+            await customauth.UpdateAuthenticationStateAsync(new UserSession
+                {
+                    Username = useracc.Username,
+                    Role = useracc.Role
+                });
+
+            ShowAlert("Valid! Logging in...");
+            await Task.Delay(3000);
+            navman.NavigateTo("/aloha", true);
+        }
+    }
+
+    private void ShowAlert(string message)
+    {
+        switch (message)
+        {
+            case "Invalid Username/Password":
+                snack.Add(message, Severity.Error);
+
+                break;
+            case "Valid! Logging in...":
+                snack.Add(message, Severity.Success);
+                break;
+        }
+    }
+
+    private async Task FillAdmin()
+    {
+        input.Username = "admin";
+        input.Password = "apassword";
+        await AuthenticateUser();
+    }
+
+    private async Task FillUser()
+    {
+        input.Username = "user";
+        input.Password = "upassword";
+        await AuthenticateUser();
+    }
+
+    private bool success;
+    private void OnValidSubmit(EditContext context)
+    {
+        success = false;
+        StateHasChanged();
+    }
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    void ButtonTestclick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+}

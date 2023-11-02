@@ -1,0 +1,10 @@
+﻿@page "/manage"
+@attribute [Authorize(Roles = "Administrator")]
+
+<AccountGrid />
+<CommentGrid />
+<HorizonDiv />
+
+@code {
+
+}

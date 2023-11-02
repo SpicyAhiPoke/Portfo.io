@@ -1,0 +1,26 @@
+﻿@page "/aloha"
+@inject NavigationManager navmanager
+@attribute [Authorize(Roles = "Administrator, User")]
+
+<PageTitle>Portfo.io</PageTitle>
+<AuthorizeView Roles="User">
+    <Authorized>
+        <PageTitle>Aloha</PageTitle>
+        <Homes />
+        <Abouts />
+        <Experiences />
+        <Projects />
+        <Contacts />
+    </Authorized>
+</AuthorizeView>
+<AuthorizeView Roles="Administrator">
+    <Authorized>
+        <Manages />
+    </Authorized>
+</AuthorizeView>
+
+@code{
+
+}
+
+

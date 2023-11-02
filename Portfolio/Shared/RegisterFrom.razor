@@ -1,0 +1,32 @@
+
+<MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="d-flex flex-column flex-grow-1 py-16">
+    <EditForm Model="@newuser" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Username" HelperText="Max. 8 characters"
+                @bind-Value="newuser.Username" For="@(() => newuser.Username)" />
+                <MudTextField Label="Email" Class="mt-3"
+                @bind-Value="newuser.Email" For="@(() => newuser.Email)" />
+                <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                @bind-Value="newuser.Password" For="@(() => newuser.Password)" InputType="InputType.Password" />
+                <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
+                @bind-Value="newuser.Password2" For="@(() => newuser.Password2)" InputType="InputType.Password" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Style="background-color:lightgreen; color:white" Class="ml-auto">Comming Soon</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+</MudContainer>
+
+@code {
+    UserAccount newuser = new();
+    bool success;
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+}

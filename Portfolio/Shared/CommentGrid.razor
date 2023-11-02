@@ -1,0 +1,107 @@
+﻿@using System.Net.Http.Json
+@inject HttpClient httpClient
+@inject CommentService commSvc 
+@inject UserAccountService accSvc
+
+<MudText Typo="Typo.h4" Style="text-align:center">Comments</MudText>
+<MudContainer>
+    <MudDataGrid T="@Comment" Items="@commSvc._comms" Hover="@_hover" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)" StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges" QuickFilter="@commSvc._quickFilter" SortMode="SortMode.Multiple" Bordered="true" Dense="true" Row RowClick="(args) => commSvc.HandleRowClick(args)" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
+        <!--search/add-->
+        <ToolBarContent>
+            <MudTextField @bind-Value="commSvc.searchcomm" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudSpacer />
+            <MudIconButton OnClick="@OnClick_Add" Icon="@Icons.Material.Outlined.Add" Variant="Variant.Filled" Style="background-color:lightgreen; color:white"></MudIconButton>
+        </ToolBarContent>
+        <!--col-->
+        <Columns>
+            <PropertyColumn Property="x => x.CommentId" Title="Id" IsEditable="false" />
+            <PropertyColumn Property="x => x.UserCommentName" Title="Name" IsEditable="false" />
+            <PropertyColumn Property="x => x.Text" />
+            <PropertyColumn Property="x => x.Likes" />
+            <PropertyColumn Property="x => x.Add" Title="Added">
+                <EditTemplate>
+                    <MudTextField @bind-Value="context.Item.Add" T="DateTime" Format="s" Label="DateTimeLocal" InputType="InputType.DateTimeLocal" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.IsEdit" Title="Edited" IsEditable="false">
+                <EditTemplate>
+                    <MudSelect @bind-Value="context.Item.IsEdit" Required RequiredError="Please make a selection." Margin="@Margin.Dense">
+                         <MudSelectItem Value="true">Yes</MudSelectItem>
+                         <MudSelectItem Value="false">No</MudSelectItem>
+                     </MudSelect>
+                 </EditTemplate>
+             </PropertyColumn>
+             <!--edit-->
+             <TemplateColumn Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
+                 <CellTemplate>
+                     <MudIconButton OnClick="@context.Actions.StartEditingItemAsync" Icon="@Icons.Material.Outlined.Edit" Color="@Color.Primary" />
+                 </CellTemplate>
+             </TemplateColumn>
+             <!--del-->
+             <TemplateColumn>
+                 <CellTemplate>
+                     <MudIconButton OnClick="@commSvc.RemoveUserComment" Icon="@Icons.Material.Outlined.Delete" Color="@Color.Error" />
+                 </CellTemplate>
+             </TemplateColumn>
+         </Columns>
+     </MudDataGrid>
+     <!--reports-->
+     <MudExpansionPanels Style="flex:1">
+         <MudExpansionPanel Text="Edit Event Report">
+             @foreach (var message in _events)
+            {
+                <MudText Typo="@Typo.body2">@message</MudText>
+            }
+            @if (_events.Count > 0)
+            {
+                <div class="d-flex">
+                    <MudSpacer />
+                    <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _events.Clear())">Clear</MudButton>
+                </div>
+            }
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudContainer>
+
+@code {
+    private List<Comment> _comms;
+    private Comment _acomm;
+
+    //init
+    protected override async Task OnInitializedAsync()
+    {
+        _comms = commSvc.GetComments();
+    }
+    //add
+    private void OnClick_Add()
+    {
+        commSvc.AddAdminComment();
+    }
+    //del
+    private void OnClick_Delete()
+    {
+        commSvc.RemoveUserComment();
+    }
+    //grid var
+    private bool _hover = true;
+    private bool _readOnly;
+    private bool _isCellEditMode;
+    private bool _editTriggerRowClick;
+    //events
+    private List<string> _events = new();
+
+    void StartedEditingItem(Comment item)
+    {
+        _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CanceledEditingItem(Comment item)
+    {
+        _events.Insert(0, $"Event = CanceledEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    void CommittedItemChanges(Comment item)
+    {
+        _events.Insert(0, $"Event = CommittedItemChanges, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+}
